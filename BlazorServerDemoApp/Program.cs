@@ -1,4 +1,6 @@
-using BlazorServerDemoApp.Data;
+
+using DataLibrary.Data;
+using DataLibrary.Db;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -7,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<IDataAccess, SqlDb>();
+builder.Services.AddSingleton<IOrderData, OrderData>();
+builder.Services.AddSingleton<IFoodData, FoodData>();
 
 var app = builder.Build();
 
