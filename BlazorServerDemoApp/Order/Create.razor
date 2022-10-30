@@ -1,6 +1,7 @@
 ﻿@page "/Order/Create"
 @inject IFoodData _foodData
 @inject IOrderData _orderData
+@inject NavigationManager navigationManager
 
 <h3>Create</h3>
 
@@ -62,6 +63,6 @@
 
         int id = await _orderData.CreateOrder(order);
 
-        order = new();
+        navigationManager.NavigateTo($"Order/Display/{id}");
     }
 }
