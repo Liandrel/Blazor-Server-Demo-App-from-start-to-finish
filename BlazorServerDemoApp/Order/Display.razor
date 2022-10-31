@@ -3,10 +3,15 @@
 
 @inject IFoodData _foodData
 @inject IOrderData _orderData
+@inject NavigationManager _navigationManager
 
 <h3>Display</h3>
 
-@if(order is null)
+@if (recordNotFound)
+{
+    <h4> Record with that Id does not exists</h4>
+}
+else if(order is null)
 {
     <h4> Record Loading...</h4>
 }
@@ -34,6 +39,19 @@ else
                 <td><strong>Quantity Ordered</strong></td>
                 <td>@order.Quantity</td>
             </tr>
+            <tr>
+                <td colspan="2">
+                @if(confirmDelete == true)
+                {
+                    <button class="btn btn-outline-danger" @onclick="HandleOrderDeleteAsync">Confirm Order</button>
+                    <button class="btn btn-secondary" @onclick="(() => confirmDelete = false)">Cancel</button>
+                }
+                else
+                {
+                    <button class="btn btn-danger" @onclick="(() => confirmDelete = true)">Delete Order</button>
+                }
+                </td>
+            </tr>
     </tbody>
     </table>
 
@@ -60,6 +78,9 @@ else
     private OrderModel order;
     private string itemPurchased;
     private OrderUpdateModel updateModel = new();
+    private bool recordNotFound = false;
+    private bool confirmDelete = false;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -74,10 +95,19 @@ else
             updateModel.Id = order.Id;
             updateModel.OrderName = order.OrderName;
         }
+        else
+        {
+            recordNotFound = true;
+        }
     }
     private async Task HandleValidSubmitAsync()
     {
         await _orderData.UpdateOrderName(updateModel.Id, updateModel.OrderName);
         order.OrderName = updateModel.OrderName;
+    }
+    private async Task HandleOrderDeleteAsync()
+    {
+        await _orderData.DeleteOrder(Id);
+        _navigationManager.NavigateTo("food/list");
     }
 }
